@@ -38,6 +38,22 @@ aws cloudformation create-stack --stack-name CloudQueryOrg-Deploy --template-bod
 aws cloudformation describe-stacks --stack-name CloudQueryOrg-Deploy --query "Stacks[].Outputs"
 ```
 
+4. Using the output you got in step (3) update the following values in your `cloudquery.yml` configuration file:
+```
+providers:
+    # provider configurations
+    - name: aws
+      configuration:
+        org:
+          admin_account:
+            role_arn: <AdminRoleArn>
+          member_role_name: <MemberRoleName>
+        regions: 
+          - "*"
+      # list of resources to fetch
+      resources:
+        - "*"
+```
 
 
 ### Cleaning up:
@@ -60,4 +76,4 @@ aws cloudformation delete-stack --stack-name CloudQueryOrg-Deploy
 
 ## Contribution
 
-Feel free to open Pull-Request for small and changes.
+Feel free to open Pull-Request for improvements, changes and bug fixes.
