@@ -6,7 +6,7 @@
   <img width="460"  src="https://user-images.githubusercontent.com/30294676/178346771-c199a410-f19a-484c-bebc-dfa8e95d8618.png">
 </p>
 
-This solution is designed to be deployed in an Admin account in your AWS Organization. It makes use of `[Service-managed](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/stacksets-concepts.html#stacksets-concepts-stackset-permission-models)` trust relationships in order to automatically deploy IAM roles into each account in the specified Account List or Organization Unit. The Role that is deployed into each member account is only able to be assumed by the role provisioned in the Admin Account.
+This solution is designed to be deployed in an Admin account in your AWS Organization. It makes use of [`Service-managed`](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/stacksets-concepts.html#stacksets-concepts-stackset-permission-models) trust relationships in order to automatically deploy IAM roles into each account in the specified Account List or Organization Unit. The Role that is deployed into each member account is only able to be assumed by the role provisioned in the Admin Account.
 
 
 
