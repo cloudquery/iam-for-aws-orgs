@@ -17,14 +17,14 @@ This solution is designed to be deployed in an Admin account in your AWS Organiz
 ### Deploying this solution:
 
 1. Clone this repo
-2. Run the following command but make sure to replace `<ROOT_ORG_ID>` with your OU of the root (if you want to deploy to your entire organization). Or a comma seperated list of OUs: 
+2. Run the following command but make sure to replace `<ROOT_ORG_ID>` with your OU of the root (if you want to deploy to your entire organization). Or a comma separated list of OUs: 
 
 ``` bash
 aws cloudformation create-stack --stack-name CloudQueryOrg-Deploy --template-body file://./template.yml  --capabilities CAPABILITY_NAMED_IAM --parameters ParameterKey=OrganizationUnitList,ParameterValue=<ROOT_ORG_ID>
 ```
 3. To get the ARN of role in the Admin and the role deployed in each member account:
 ``` bash
-aws cloudformation describe-stacks --stack-name CloudQueryOrg-Deploy --region eu-central-1 --query "Stacks[].Outputs"
+aws cloudformation describe-stacks --stack-name CloudQueryOrg-Deploy --query "Stacks[].Outputs"
 ```
 
 
