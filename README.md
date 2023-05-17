@@ -16,6 +16,9 @@ This solution is designed to help users setup the appropriate roles and permissi
 
 It makes use of [`Service-managed`](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/stacksets-concepts.html#stacksets-concepts-stackset-permission-models) trust relationships in order to automatically deploy IAM roles into each account in the specified Account List or Organization Unit. The Role that is deployed into each member account is only able to be assumed by the role provisioned in the Admin Account.
 
+Note: For deployment purposes, the template may change depending on where the StackSet is deployed from.  For AWS Organizations, Stacksets can be managed from either the Organization Management (Admin) Account or a [Delegated Administrator Account](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/stacksets-orgs-delegated-admin.html).  A delegated administrator account is a member account that can create and manage stacksets with service-managed permissions for the organization.  
+
+For deploying from a delegated administrator account, `DELEGATED_ADMIN` must be specified in the `CallAs` property in the [CloudFormation StackSet](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-cloudformation-stackset.html#aws-resource-cloudformation-stackset-properties).
 
 <p align="center">
   <img width="460"  src="https://user-images.githubusercontent.com/30294676/178352333-7146015f-f8df-4131-953a-d42627458824.png">
