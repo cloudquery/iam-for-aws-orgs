@@ -73,7 +73,6 @@ aws cloudformation delete-stack --stack-name CloudQueryOrg-Deploy
 
 * Homepage: https://cloudquery.io
 * Documentation: https://docs.cloudquery.io
-* CloudQuery Hub (providers & policies documentation): https://hub.cloudquery.io/
 * Discord: https://cloudquery.io/discord
 
 
