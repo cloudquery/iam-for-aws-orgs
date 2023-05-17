@@ -12,15 +12,32 @@ CloudQuery IAM Permissions
 ## Overview:
 
 
-This solution is designed to help users setup the appropriate roles and permissions in order to use CloudQuery to fetch all of supported resources in their accounts. 
-
-It makes use of [`Service-managed`](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/stacksets-concepts.html#stacksets-concepts-stackset-permission-models) trust relationships in order to automatically deploy IAM roles into each account in the specified Account List or Organization Unit. The Role that is deployed into each member account is only able to be assumed by the role provisioned in the Admin Account.
-
+This solution is designed to help users setup the appropriate AWS IAM roles and permissions in order to use CloudQuery to fetch all supported resources in their accounts within an AWS Organization. This solution will deploy a child role into each member account and a role in the administrator account for CloudQuery to use.
 
 <p align="center">
   <img width="460"  src="https://user-images.githubusercontent.com/30294676/178352333-7146015f-f8df-4131-953a-d42627458824.png">
 </p>
 
+This solution leverages CloudFormation StackSets and [`service-managed`](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/stacksets-concepts.html#stacksets-concepts-stackset-permission-models) permissions in order to automatically deploy IAM roles into each account in the specified Account List or Organization Unit without additional deployment IAM roles. 
+
+### Organization Management Account or Delegated Administrator Account
+
+For deployment purposes, the template may change depending on where the StackSet is deployed from.  For AWS Organizations, Stacksets can be managed from either the Organization Management (Admin) Account or a [Delegated Administrator Account](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/stacksets-orgs-delegated-admin.html).  A delegated administrator account is a member account that can create and manage stacksets with service-managed permissions for the organization.  
+
+If using a delegated administrator account, delegated administration must be set up for CloudFormation StackSets.  Follow AWS's guide [here](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/stacksets-orgs-delegated-admin.html).  For deploying from a delegated administrator account, `DELEGATED_ADMIN` must be specified in the `CallAs` property in the [CloudFormation StackSet](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-cloudformation-stackset.html#aws-resource-cloudformation-stackset-properties).
+
+```
+CloudQueryMemberRoles:
+    Type: 'AWS::CloudFormation::StackSet'
+    Properties:
+      StackSetName: CloudQueryOrgRoles
+      CallAs: DELEGATED_ADMIN
+      Description: cloudquery org setup
+      Capabilities:
+        - CAPABILITY_NAMED_IAM
+```
+
+The current `template.yml` is meant for usage from the organization management account and the `CallAs` line will need to be added to the template for usage from a Delegated Administrator account.
 
 ## Usage
 
@@ -70,7 +87,6 @@ aws cloudformation delete-stack --stack-name CloudQueryOrg-Deploy
 
 * Homepage: https://cloudquery.io
 * Documentation: https://docs.cloudquery.io
-* CloudQuery Hub (providers & policies documentation): https://hub.cloudquery.io/
 * Discord: https://cloudquery.io/discord
 
 
