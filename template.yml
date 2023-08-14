@@ -22,7 +22,7 @@ Resources:
   CloudqueryReadOnly:
     Type: 'AWS::IAM::Role'
     Properties:
-      RoleName: cloudquery-ro
+      RoleName: cloudquery-mgmt-ro
       Description: Admin Role that CloudQuery will use to fetch resources from member accounts
       Policies:
         - PolicyName: root
