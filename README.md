@@ -56,20 +56,24 @@ aws cloudformation describe-stacks --stack-name CloudQueryOrg-Deploy --query "St
 ```
 
 4. Using the output you got in step (3) update the following values in your `cloudquery.yml` configuration file:
+
 ```
-providers:
-    # provider configurations
-    - name: aws
-      configuration:
-        org:
-          admin_account:
-            role_arn: <AdminRoleArn>
-          member_role_name: <MemberRoleName>
-        regions: 
-          - "*"
-      # list of resources to fetch
-      resources:
-        - "*"
+kind: source
+spec:
+  name: aws
+  path: cloudquery/aws
+  registry: cloudquery
+  version: "v26.6.0" # find latest version here: https://hub.cloudquery.io/plugins/source/cloudquery/aws/latest
+  tables: ['aws_s3_buckets']
+  destinations: ["postgresql"]
+  spec:
+    aws_debug: false
+    org:
+      admin_account:
+        role_arn: <AdminRoleArn>
+      member_role_name: <MemberRoleName>
+    regions: 
+      - "*"
 ```
 
 
