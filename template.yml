@@ -110,7 +110,10 @@ Resources:
                                       "logs:GetLogEvents",
                                       "s3:GetObject",
                                       "sdb:Select*",
-                                      "sqs:ReceiveMessage"
+                                      "sqs:ReceiveMessage",
+                                      "secretsmanager:GetSecretValue",
+                                      "ssm:GetCommandInvocation",
+                                      "ssm:GetParameter*"
                                   ]
                               }
                           ]
