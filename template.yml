@@ -13,10 +13,22 @@ Parameters:
     Type: String
     Default: cloudquery-ro
     Description: The name of the role that CloudQuery will assume in each member account.
-
+  ExternalPrincipal:
+    Type: String
+    Default: ""
+    Description: When CloudQuery is deployed in a different account than the management account, this this will be the principal that needs to be able to assume the `cloudquery-mgmt-ro` role.
+  DeployFromDelegatedAdmin:
+    Type: String
+    Default: "false"
+    AllowedValues:
+      - "true"
+      - "false"
+    Description: The account that will be used to deploy the stackset is a delegated admin account.
 Conditions:
   OUs: !Not [ !Equals [ !Ref OrganizationUnitList, ''] ]
   Accounts: !Not [ !Equals [ !Ref AccountList, ''] ]
+  ExternalPrincipal: !Not [ !Equals [ !Ref ExternalPrincipal, ''] ]
+  DeployFromDelegatedAdmin: !Equals [ !Ref DeployFromDelegatedAdmin, "true" ]
 
 Resources:
   CloudqueryReadOnly:
@@ -39,7 +51,9 @@ Resources:
         Statement:
           - Effect: Allow
             Principal:
-              AWS: !Sub '${AWS::AccountId}' 
+              AWS: 
+                - !Sub '${AWS::AccountId}' 
+                - !If [ExternalPrincipal, !Ref ExternalPrincipal, !Ref AWS::NoValue]
             Action:
               - 'sts:AssumeRole'
               - 'sts:TagSession'
@@ -61,6 +75,10 @@ Resources:
             OrganizationalUnitIds: !If [OUs, !Split [ ",", !Ref OrganizationUnitList ], !Ref  AWS::NoValue]
           Regions: 
             - !Ref AWS::Region
+      CallAs: !If [DeployFromDelegatedAdmin, "DELEGATED_ADMIN", !Ref AWS::NoValue]
+      OperationPreferences:
+        ConcurrencyMode: SOFT_FAILURE_TOLERANCE
+        MaxConcurrentCount: 10
       ManagedExecution:
         Active: true
       Parameters: 
@@ -86,7 +104,6 @@ Resources:
               "Cloudquery": {
                   "Type": "AWS::IAM::ManagedPolicy",
                   "Properties": {
-                      "ManagedPolicyName": "cloudquery",
                       "Description": "A Limited policy to allow cloudquery to do its job",
                       "PolicyDocument": {
                           "Version": "2012-10-17",
