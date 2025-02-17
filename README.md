@@ -24,20 +24,7 @@ This solution leverages CloudFormation StackSets and [`service-managed`](https:/
 
 For deployment purposes, the template may change depending on where the StackSet is deployed from.  For AWS Organizations, Stacksets can be managed from either the Organization Management (Admin) Account or a [Delegated Administrator Account](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/stacksets-orgs-delegated-admin.html).  A delegated administrator account is a member account that can create and manage stacksets with service-managed permissions for the organization.  
 
-If using a delegated administrator account, delegated administration must be set up for CloudFormation StackSets.  Follow AWS's guide [here](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/stacksets-orgs-delegated-admin.html).  For deploying from a delegated administrator account, `DELEGATED_ADMIN` must be specified in the `CallAs` property in the [CloudFormation StackSet](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-cloudformation-stackset.html#aws-resource-cloudformation-stackset-properties).
-
-```
-CloudQueryMemberRoles:
-    Type: 'AWS::CloudFormation::StackSet'
-    Properties:
-      StackSetName: CloudQueryOrgRoles
-      CallAs: DELEGATED_ADMIN
-      Description: cloudquery org setup
-      Capabilities:
-        - CAPABILITY_NAMED_IAM
-```
-
-The current `template.yml` is meant for usage from the organization management account and the `CallAs` line will need to be added to the template for usage from a Delegated Administrator account.
+If using a delegated administrator account, delegated administration must be set up for CloudFormation StackSets.  Follow AWS's guide [here](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/stacksets-orgs-delegated-admin.html).  For deploying from a delegated administrator account, the `DeployFromDelegatedAdmin` parameter must be set to `true` when deploying the solution.
 
 ## Usage
 
@@ -75,6 +62,23 @@ spec:
     regions: 
       - "*"
 ```
+
+### Other Parameters:
+
+`ExternalPrincipal`: If your deployment pattern is such that the credentials used to run CloudQuery are not in the same management account as where the Stack is deployed, specifying either the AccountID or ARN of the principal that will be running CloudQuery will add in a trust relationship to enable that principal to assume the management role. This is necessary because by default each of the member account roles only has a trust relationship with the single managment role that the stack deployed. This feature will enable CloudQuery to assume the role in the management account and then assume the role in each member account.
+
+Here is an example of a Cloudquery configuration file that requires the `ExternalPrincipal` parameter:
+
+```
+  spec:
+    org:
+      admin_account:
+        role_arn: arn:aws:iam::<MNGMNT_ACCOUNT_ID>:role/cloudquery-mgmt-ro
+      member_role_name: cq-ro
+      member_trusted_principal:
+        role_arn: arn:aws:iam::<MNGMNT_ACCOUNT_ID>:role/cloudquery-mgmt-ro
+```
+
 
 
 ### Cleaning up:
