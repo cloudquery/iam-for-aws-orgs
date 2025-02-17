@@ -13,10 +13,15 @@ Parameters:
     Type: String
     Default: cloudquery-ro
     Description: The name of the role that CloudQuery will assume in each member account.
+  AdditionalTrustedArns:
+    Type: CommaDelimitedList
+    Description: "Additional ARNs to trust (comma-separated list)"
+    Default: ""
 
 Conditions:
-  OUs: !Not [ !Equals [ !Ref OrganizationUnitList, ''] ]
-  Accounts: !Not [ !Equals [ !Ref AccountList, ''] ]
+  OUs: !Not [!Equals [!Ref OrganizationUnitList, ""]]
+  Accounts: !Not [!Equals [!Ref AccountList, ""]]
+  HasAdditionalTrusts: !Not [!Equals [!Join [",", !Ref AdditionalTrustedArns], ""]]
 
 Resources:
   CloudqueryReadOnly:
@@ -39,7 +44,7 @@ Resources:
         Statement:
           - Effect: Allow
             Principal:
-              AWS: !Sub '${AWS::AccountId}' 
+              AWS: !If [HasAdditionalTrusts, !Split [",", !Join [",", [!Sub '${AWS::AccountId}', !Join [",", !Ref AdditionalTrustedArns]]]], [!Sub '${AWS::AccountId}']]
             Action:
               - 'sts:AssumeRole'
               - 'sts:TagSession'
