@@ -13,10 +13,10 @@ Parameters:
     Type: String
     Default: cloudquery-ro
     Description: The name of the role that CloudQuery will assume in each member account.
-  ExternalPrincipal:
-    Type: String
+  AdditionalTrustedArns:
+    Type: CommaDelimitedList
+    Description: "Additional ARNs to trust (comma-separated list)"
     Default: ""
-    Description: When CloudQuery is deployed in a different account than the management account, this this will be the principal that needs to be able to assume the `cloudquery-mgmt-ro` role.
   DeployFromDelegatedAdmin:
     Type: String
     Default: "false"
@@ -27,7 +27,7 @@ Parameters:
 Conditions:
   OUs: !Not [ !Equals [ !Ref OrganizationUnitList, ''] ]
   Accounts: !Not [ !Equals [ !Ref AccountList, ''] ]
-  ExternalPrincipal: !Not [ !Equals [ !Ref ExternalPrincipal, ''] ]
+  HasAdditionalTrusts: !Not [!Equals [!Join [",", !Ref AdditionalTrustedArns], ""]]
   DeployFromDelegatedAdmin: !Equals [ !Ref DeployFromDelegatedAdmin, "true" ]
 
 Resources:
@@ -51,9 +51,7 @@ Resources:
         Statement:
           - Effect: Allow
             Principal:
-              AWS: 
-                - !Sub '${AWS::AccountId}' 
-                - !If [ExternalPrincipal, !Ref ExternalPrincipal, !Ref AWS::NoValue]
+              AWS: !If [HasAdditionalTrusts, !Split [",", !Join [",", [!Sub '${AWS::AccountId}', !Join [",", !Ref AdditionalTrustedArns]]]], [!Sub '${AWS::AccountId}']]
             Action:
               - 'sts:AssumeRole'
               - 'sts:TagSession'
