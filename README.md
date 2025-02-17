@@ -65,9 +65,9 @@ spec:
 
 ### Other Parameters:
 
-`ExternalPrincipal`: If your deployment pattern is such that the credentials used to run CloudQuery are not in the same management account as where the Stack is deployed, specifying either the AccountID or ARN of the principal that will be running CloudQuery will add in a trust relationship to enable that principal to assume the management role. This is necessary because by default each of the member account roles only has a trust relationship with the single managment role that the stack deployed. This feature will enable CloudQuery to assume the role in the management account and then assume the role in each member account.
+`AdditionalTrustedArns`: If your deployment pattern is such that the credentials used to run CloudQuery are not in the same management account as where the Stack is deployed, specifying either the AccountID or ARN of the principal that will be running CloudQuery will add in a trust relationship to enable that principal to assume the management role. This is necessary because by default each of the member account roles only has a trust relationship with the single management role that the stack deployed. This feature will enable CloudQuery to assume the role in the management account and then assume the role in each member account.
 
-Here is an example of a Cloudquery configuration file that requires the `ExternalPrincipal` parameter:
+Here is an example of a Cloudquery configuration file that requires the `AdditionalTrustedArns` parameter:
 
 ```
   spec:
