@@ -25,8 +25,8 @@ Parameters:
       - "false"
     Description: The account that will be used to deploy the stackset is a delegated admin account.
 Conditions:
-  OUs: !Not [ !Equals [ !Ref OrganizationUnitList, ''] ]
-  Accounts: !Not [ !Equals [ !Ref AccountList, ''] ]
+  OUs: !Not [ !Equals [ !Ref OrganizationUnitList, ""] ]
+  Accounts: !Not [ !Equals [ !Ref AccountList, ""] ]
   HasAdditionalTrusts: !Not [!Equals [!Join [",", !Ref AdditionalTrustedArns], ""]]
   DeployFromDelegatedAdmin: !Equals [ !Ref DeployFromDelegatedAdmin, "true" ]
 
