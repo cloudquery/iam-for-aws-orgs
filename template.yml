@@ -24,11 +24,18 @@ Parameters:
       - "true"
       - "false"
     Description: The account that will be used to deploy the stackset is a delegated admin account.
+  ExternalID:
+    Type: String
+    Default: ""
+    Description: External ID to use for the trust policy.
 Conditions:
   OUs: !Not [!Equals [!Ref OrganizationUnitList, ""]]
   Accounts: !Not [!Equals [!Ref AccountList, ""]]
   HasAdditionalTrusts: !Not [!Equals [!Join [",", !Ref AdditionalTrustedArns], ""]]
   DeployFromDelegatedAdmin: !Equals [ !Ref DeployFromDelegatedAdmin, "true" ]
+  # Check if ExternalID is provided and HasAdditionalTrusts is true
+  # This condition is used to determine if the ExternalID should be included in the trust policy
+  HasExternalID: !And [!Not [!Equals [!Ref ExternalID, ""]], !Condition HasAdditionalTrusts]
 
 Resources:
   CloudqueryReadOnly:
@@ -55,6 +62,9 @@ Resources:
             Action:
               - 'sts:AssumeRole'
               - 'sts:TagSession'
+            Condition:
+              StringEquals:
+                sts:ExternalId: !If [HasExternalID, !Ref ExternalID, !Ref AWS::NoValue]
 
   CloudQueryMemberRoles:
     Type: 'AWS::CloudFormation::StackSet'
